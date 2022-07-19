@@ -1,6 +1,7 @@
 var express = require('express')
 var userController = require('../controller/UserController')
 var itemController = require('../controller/ItemController')
+var cartController = require('../controller/CartController')
 var middleware = require('../middleware/AuthMiddleware')
 
 var cors = require('cors')
@@ -26,5 +27,6 @@ app.post('/register', userController.register)
 app.use(middleware.validateToken)
 app.get('/items', itemController.getAll)
 app.get('/items/:id', itemController.getById)
+app.get('/carts', cartController.getAll)
 
 module.exports = app

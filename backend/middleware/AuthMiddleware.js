@@ -5,8 +5,10 @@ const validateToken = (req, res, next) => {
 
   let query = 'SELECT * FROM users WHERE token = ? LIMIT 1'
   connection.connect.query(query, [req.headers.auth_token], function (err, result) {
-    if (!err && result.length) next()
-    else return res.status(403).json({ message: 'Token invalid' })
+    if (!err && result.length) {
+      res.locals.current_user = JSON.parse(JSON.stringify(result[0]))
+      next()
+    } else return res.status(403).json({ message: 'Token invalid' })
   })
 }
 
