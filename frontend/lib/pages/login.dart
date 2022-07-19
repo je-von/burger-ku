@@ -13,8 +13,8 @@ class LoginPageState extends State<LoginPage> {
   String _errorField = "";
   String _errorMessage = "";
 
-  var _ctrlEmail = TextEditingController();
-  var _ctrlPassword = TextEditingController();
+  final _ctrlEmail = TextEditingController();
+  final _ctrlPassword = TextEditingController();
 
   dynamic auth(String email, String password) {}
 
@@ -33,10 +33,15 @@ class LoginPageState extends State<LoginPage> {
     } else if (password.length < 8) {
       _errorField = "PASS";
       _errorMessage = "Password must be at least 8 characters!";
-    } else if (!RegExp(r"^[a-zA-Z0-9]+$").hasMatch(password)) {
+    } else if (!RegExp(r".*[A-Z].*").hasMatch(password) ||
+        !RegExp(r".*[a-z].*").hasMatch(password) ||
+        !RegExp(r".*[0-9].*").hasMatch(password) ||
+        !RegExp(r"[A-Za-z0-9]*").hasMatch(password)) {
       _errorField = "PASS";
       _errorMessage = "Password must be alphanumeric!";
     } else {
+      _errorField = "PASS";
+      _errorMessage = "dah!";
       // User? user = null;
       // globals.users.forEach((u) {
       //   if (u.email == email && u.password == password) {
@@ -67,20 +72,20 @@ class LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
+        title: const Text('Login'),
       ),
       body: Container(
-        padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
+        padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
         child: ListView(
           children: [
-            Container(
+            SizedBox(
               height: 200,
               width: 200,
               child: Center(
                 child: Image.asset('assets/logo.png'),
               ),
             ),
-            Text(
+            const Text(
               'Email',
               style: TextStyle(
                 fontSize: 20,
@@ -88,17 +93,17 @@ class LoginPageState extends State<LoginPage> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 15),
+              padding: const EdgeInsets.symmetric(vertical: 15),
               child: TextField(
                 decoration: InputDecoration(
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                   hintText: 'Email address',
                   errorText: _errorField == 'EMAIL' ? _errorMessage : null,
                 ),
                 controller: _ctrlEmail,
               ),
             ),
-            Text(
+            const Text(
               'Password',
               style: TextStyle(
                 fontSize: 20,
@@ -106,11 +111,11 @@ class LoginPageState extends State<LoginPage> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 15),
+              padding: const EdgeInsets.symmetric(vertical: 15),
               child: TextField(
                 obscureText: true,
                 decoration: InputDecoration(
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                   hintText: 'Password',
                   errorText: _errorField == 'PASS' ? _errorMessage : null,
                 ),
@@ -118,7 +123,7 @@ class LoginPageState extends State<LoginPage> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(
+              padding: const EdgeInsets.symmetric(
                 vertical: 15,
                 horizontal: 100,
               ),
@@ -128,14 +133,6 @@ class LoginPageState extends State<LoginPage> {
                     _validateLogin(context);
                   });
                 },
-                child: Text(
-                  'Login',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w300,
-                  ),
-                ),
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.resolveWith<Color>(
                       (Set<MaterialState> states) {
@@ -144,6 +141,14 @@ class LoginPageState extends State<LoginPage> {
                     }
                     return Colors.orange.shade200;
                   }),
+                ),
+                child: const Text(
+                  'Login',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w300,
+                  ),
                 ),
               ),
             ),

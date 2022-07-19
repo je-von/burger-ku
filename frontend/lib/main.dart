@@ -28,7 +28,7 @@ class AppState extends State<App> {
         fontFamily: 'Montserrat',
         primarySwatch: Colors.orange,
       ),
-      home: LoginPage(),
+      home: const LoginPage(),
     );
   }
 }
