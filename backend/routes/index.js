@@ -24,7 +24,7 @@ app.post('/register', userController.register)
 
 // MIDDLEWARE to check user token
 app.use(middleware.validateToken)
-
 app.get('/items', itemController.getAll)
+app.get('/items/:id', itemController.getById)
 
 module.exports = app

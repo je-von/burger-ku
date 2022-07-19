@@ -8,5 +8,14 @@ const getAll = (req, res) => {
   })
 }
 
+const getById = (req, res) => {
+  let query = 'SELECT * FROM items WHERE id = ? LIMIT 1'
+  connection.connect.query(query, req.params.id, function (err, result) {
+    if (!err && result.length) return res.json({ data: result[0], message: 'Success' })
+    return res.json({ message: err?.sqlMessage || 'Error!' })
+  })
+}
+
 exports.getAll = getAll
+exports.getById = getById
 module.exports = exports
