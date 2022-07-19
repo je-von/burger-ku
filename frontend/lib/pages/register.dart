@@ -1,49 +1,97 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:frontend/pages/register.dart';
+import 'package:frontend/pages/login.dart';
 import 'package:frontend/util/api.dart';
 import 'package:frontend/util/helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return LoginPageState();
+    return RegisterPageState();
   }
 }
 
-class LoginPageState extends State<LoginPage> {
+class RegisterPageState extends State<RegisterPage> {
   String _errorField = "";
   String _errorMessage = "";
 
+  final _ctrlName = TextEditingController();
   final _ctrlEmail = TextEditingController();
   final _ctrlPassword = TextEditingController();
+  final _ctrlConfirmPassword = TextEditingController();
 
   void _validateLogin(BuildContext context) async {
+    _errorField = "";
+    _errorMessage = "";
+    String name = _ctrlName.text;
     String email = _ctrlEmail.text;
     String password = _ctrlPassword.text;
-    if (email.isEmpty) {
+    String confirmPassword = _ctrlConfirmPassword.text;
+    if (name.isEmpty) {
+      _errorField = "NAME";
+      _errorMessage = "Name must be filled!";
+    } else if (email.isEmpty) {
       _errorField = "EMAIL";
       _errorMessage = "Email must be filled!";
+    } else if (!email.contains('@') || !email.endsWith('.com')) {
+      _errorField = "EMAIL";
+      _errorMessage = "Email must be in a valid format!";
     } else if (password.isEmpty) {
       _errorField = "PASS";
       _errorMessage = "Password must be filled!";
+    } else if (password.length < 8) {
+      _errorField = "PASS";
+      _errorMessage = "Password must be at least 8 characters!";
+    } else if (!RegExp(r".*[A-Z].*").hasMatch(password) ||
+        !RegExp(r".*[a-z].*").hasMatch(password) ||
+        !RegExp(r".*[0-9].*").hasMatch(password) ||
+        !RegExp(r"[A-Za-z0-9]*").hasMatch(password)) {
+      _errorField = "PASS";
+      _errorMessage = "Password must be alphanumeric!";
+    } else if (confirmPassword != password) {
+      _errorField = "CONFIRM_PASS";
+      _errorMessage = "Confirm password doesn't match password!";
     } else {
-      final response = await Api.request(
-          'post', 'auth', {'email': email, 'password': password});
+      // _errorField = "PASS";
+      // _errorMessage = "dah!";
+      // User? user = null;
+      // globals.users.forEach((u) {
+      //   if (u.email == email && u.password == password) {
+      //     user = u;
+      //     return;
+      //   }
+      // });
+      // if (user == null) {
+      //   _errorField = "PASS";
+      //   _errorMessage = "Email or Password are incorrect!";
+      // } else {
+      //   //Login success
+      //   _errorField = _errorMessage = "";
+      //   globals.currentUser = user;
+      //   Navigator.push(
+      //     context,
+      //     MaterialPageRoute(builder: (builder) {
+      //       return HomePage();
+      //     }),
+      //   );
+      //   return;
+      // }
+
+      final response = await Api.request('post', 'register',
+          {'name': name, 'email': email, 'password': password});
       final body = json.decode(response.body);
       if (response.statusCode == 200) {
-        // print(body['data']['token']);
-        SharedPreferences preferences = await SharedPreferences.getInstance();
-        preferences.setString('auth_token', body['data']['token']);
-        Helper.showSnackBar(context, 'Login Success!');
+        Helper.showSnackBar(context, 'Register Success!');
       } else {
         Helper.showSnackBar(context, body['message']);
       }
+      // print(response);
     }
+    // print(_errorMessage);
   }
 
   @override
@@ -62,6 +110,30 @@ class LoginPageState extends State<LoginPage> {
                 width: 200,
                 child: Center(
                   child: Image.asset('assets/logo.png'),
+                ),
+              ),
+              Row(
+                children: const [
+                  Text(
+                    'Name',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  )
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 5, bottom: 20),
+                child: TextField(
+                  decoration: InputDecoration(
+                    isDense: true,
+                    contentPadding: const EdgeInsets.all(10),
+                    border: const OutlineInputBorder(),
+                    hintText: 'John Doe',
+                    errorText: _errorField == 'NAME' ? _errorMessage : null,
+                  ),
+                  controller: _ctrlName,
                 ),
               ),
               Row(
@@ -113,6 +185,32 @@ class LoginPageState extends State<LoginPage> {
                   controller: _ctrlPassword,
                 ),
               ),
+              Row(
+                children: const [
+                  Text(
+                    'Confirm Password',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  )
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 5, bottom: 20),
+                child: TextField(
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    contentPadding: const EdgeInsets.all(10),
+                    border: const OutlineInputBorder(),
+                    hintText: '********',
+                    errorText:
+                        _errorField == 'CONFIRM_PASS' ? _errorMessage : null,
+                  ),
+                  controller: _ctrlConfirmPassword,
+                ),
+              ),
               SizedBox(
                 width: 250,
                 child: ElevatedButton(
@@ -131,7 +229,7 @@ class LoginPageState extends State<LoginPage> {
                     }),
                   ),
                   child: const Text(
-                    'LOGIN',
+                    'REGISTER',
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 16,
@@ -181,11 +279,11 @@ class LoginPageState extends State<LoginPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (builder) {
-                      return const RegisterPage();
+                      return const LoginPage();
                     }),
                   );
                 },
-                child: const Text("Don't have an account? Register Here"),
+                child: const Text("Already have an account? Login Here"),
               ),
             ],
           ),
