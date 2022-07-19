@@ -82,7 +82,7 @@ class RegisterPageState extends State<RegisterPage> {
       // }
 
       final response = await Api.request('post', 'register',
-          {'name': name, 'email': email, 'password': password});
+          body: {'name': name, 'email': email, 'password': password});
       final body = json.decode(response.body);
       if (response.statusCode == 200) {
         Helper.showSnackBar(context, 'Register Success!');

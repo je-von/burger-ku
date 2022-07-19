@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:frontend/pages/home.dart';
 import 'package:frontend/pages/register.dart';
 import 'package:frontend/util/api.dart';
 import 'package:frontend/util/helper.dart';
@@ -23,6 +24,8 @@ class LoginPageState extends State<LoginPage> {
   final _ctrlPassword = TextEditingController();
 
   void _validateLogin(BuildContext context) async {
+    _errorField = "";
+    _errorMessage = "";
     String email = _ctrlEmail.text;
     String password = _ctrlPassword.text;
     if (email.isEmpty) {
@@ -32,14 +35,21 @@ class LoginPageState extends State<LoginPage> {
       _errorField = "PASS";
       _errorMessage = "Password must be filled!";
     } else {
-      final response = await Api.request(
-          'post', 'auth', {'email': email, 'password': password});
+      final response = await Api.request('post', 'auth',
+          body: {'email': email, 'password': password});
       final body = json.decode(response.body);
+      print(body);
       if (response.statusCode == 200) {
         // print(body['data']['token']);
         SharedPreferences preferences = await SharedPreferences.getInstance();
         preferences.setString('auth_token', body['data']['token']);
         Helper.showSnackBar(context, 'Login Success!');
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (context) => const HomePage(),
+          ),
+          (Route<dynamic> route) => false,
+        );
       } else {
         Helper.showSnackBar(context, body['message']);
       }
