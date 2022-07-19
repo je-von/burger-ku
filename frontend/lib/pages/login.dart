@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:frontend/util/api.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -68,7 +71,15 @@ class LoginPageState extends State<LoginPage> {
 
       final response = await Api.request(
           'post', 'auth', {'email': email, 'password': password});
-      print(response);
+      final body = json.decode(response.body);
+      if (response.statusCode == 200) {
+        // print(body['data']['token']);
+        SharedPreferences preferences = await SharedPreferences.getInstance();
+        preferences.setString('auth_token', body['data']['token']);
+      } else {
+        print(body['message']);
+      }
+      // print(response);
     }
     // print(_errorMessage);
   }

@@ -4,7 +4,7 @@ const getAll = (req, res) => {
   const user = res.locals.current_user
   let query = 'SELECT * FROM carts c JOIN items i ON c.item_id = i.id WHERE user_id = ?'
   connection.connect.query(query, [user.id], function (err, result) {
-    if (err) return res.json({ message: err?.sqlMessage || 'Error!' })
+    if (err) return res.status(400).json({ message: err?.sqlMessage || 'Error!' })
     return res.json({
       data: JSON.parse(JSON.stringify(result)).map((r) => ({
         item: {
@@ -26,7 +26,7 @@ const insert = (req, res) => {
   let query = 'replace into carts (user_id, item_id) values (?, ?)'
 
   connection.connect.query(query, [user.id, req.body.item_id], function (err, result) {
-    if (err) return res.json({ message: err?.sqlMessage || 'Error!' })
+    if (err) return res.status(400).json({ message: err?.sqlMessage || 'Error!' })
     return res.json({ message: 'Success' })
   })
 }
@@ -36,7 +36,7 @@ const remove = (req, res) => {
   let query = 'DELETE FROM carts WHERE user_id = ? AND item_id = ?'
 
   connection.connect.query(query, [user.id, req.body.item_id], function (err, result) {
-    if (err || !result.affectedRows) return res.json({ message: err?.sqlMessage || 'Error!' })
+    if (err || !result.affectedRows) return res.status(400).json({ message: err?.sqlMessage || 'Error!' })
     return res.json({ message: 'Success' })
   })
 }
@@ -46,7 +46,7 @@ const checkout = (req, res) => {
   let query = 'DELETE FROM carts WHERE user_id = ?'
 
   connection.connect.query(query, [user.id, req.body.item_id], function (err, result) {
-    if (err || !result.affectedRows) return res.json({ message: err?.sqlMessage || 'Error!' })
+    if (err || !result.affectedRows) return res.status(400).json({ message: err?.sqlMessage || 'Error!' })
     return res.json({ message: 'Success' })
   })
 }
