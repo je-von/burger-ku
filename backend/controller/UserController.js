@@ -1,11 +1,11 @@
 var connection = require('../connection/db')
 
 const auth = (req, res) => {
-  let query = "SELECT * FROM users WHERE email = '" + req.body.email + "' AND password = '" + req.body.password + "' LIMIT 1"
-  connection.connect.query(query, function (err, result, fields) {
-    if (err) throw err
-    if (result.length) return res.json({ data: result[0], message: 'Success' })
-    else return res.json({ message: 'Invalid email or password!' })
+  let query = 'SELECT * FROM users WHERE email = ? AND password = ? LIMIT 1'
+  console.log(query)
+  connection.connect.query(query, [req.body.email, req.body.password], function (err, result, fields) {
+    if (!err && result.length) return res.json({ data: result[0], message: 'Success' })
+    else return res.json({ message: err.sqlMessage || 'Invalid email or password!' })
   })
 }
 
@@ -14,11 +14,11 @@ const register = (req, res) => {
     .fill(0)
     .map((x) => Math.random().toString(36).charAt(2))
     .join('')
-  let query = "INSERT INTO users VALUES (null, '" + req.body.name + "', '" + req.body.email + "', '" + req.body.password + "', '" + token + "')"
+  let query = 'INSERT INTO users VALUES (null, ?, ?, ?, ?)'
 
-  connection.connect.query(query, function (err, result) {
-    if (err) throw err
-    return res.json(result)
+  connection.connect.query(query, [req.body.name, req.body.email, req.body.password, token], function (err, result) {
+    if (err) return res.json({ message: err.sqlMessage || 'Error!' })
+    return res.json({ message: 'Success' })
   })
 }
 

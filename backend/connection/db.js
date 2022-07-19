@@ -1,11 +1,13 @@
 var mysql = require('mysql')
 
-var connect = mysql.createConnection({
+const connect = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: '',
   database: 'burgerku',
 })
-
+connect.on('error', function (err) {
+  console.log(err)
+})
 exports.connect = connect
 module.exports = exports

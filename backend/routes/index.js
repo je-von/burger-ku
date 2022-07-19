@@ -1,5 +1,6 @@
 var express = require('express')
 var userController = require('../controller/UserController')
+var itemController = require('../controller/ItemController')
 var cors = require('cors')
 
 var app = express()
@@ -18,5 +19,7 @@ app.get('/', function (req, res, next) {
 })
 app.post('/auth', userController.auth)
 app.post('/register', userController.register)
+
+app.get('/items', itemController.getAll)
 
 module.exports = app
