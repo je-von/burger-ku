@@ -1,12 +1,13 @@
 var connection = require('../connection/db')
 
-const validateToken = (req, res) => {
-  let query = "SELECT * FROM users WHERE token = '" + req.headers.auth_token + "' LIMIT 1"
-  //   connection.connect.query(query, function (err, result, fields) {
-  //     if (err) throw err
-  //     if (result.length) return res.json({ data: result[0], message: 'Success' })
-  //     else return res.json({ message: 'Invalid email or password!' })
-  //   })
+const validateToken = (req, res, next) => {
+  if (!req.headers.auth_token) return res.status(403).json({ message: 'No token' })
+
+  let query = 'SELECT * FROM users WHERE token = ? LIMIT 1'
+  connection.connect.query(query, [req.headers.auth_token], function (err, result) {
+    if (!err && result.length) next()
+    else return res.status(403).json({ message: 'Token invalid' })
+  })
 }
 
 exports.validateToken = validateToken

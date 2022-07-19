@@ -1,6 +1,8 @@
 var express = require('express')
 var userController = require('../controller/UserController')
 var itemController = require('../controller/ItemController')
+var middleware = require('../middleware/AuthMiddleware')
+
 var cors = require('cors')
 
 var app = express()
@@ -19,6 +21,9 @@ app.get('/', function (req, res, next) {
 })
 app.post('/auth', userController.auth)
 app.post('/register', userController.register)
+
+// MIDDLEWARE to check user token
+app.use(middleware.validateToken)
 
 app.get('/items', itemController.getAll)
 
