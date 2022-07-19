@@ -15,7 +15,6 @@ const getAll = (req, res) => {
           image_path: r.image_path,
           price: r.price,
         },
-        quantity: r.quantity,
       })),
       message: 'Success',
     })
@@ -24,9 +23,9 @@ const getAll = (req, res) => {
 
 const insert = (req, res) => {
   const user = res.locals.current_user
-  let query = 'insert into carts (user_id, item_id, quantity) values (?, ?, ?) on duplicate key update quantity = quantity + ?'
+  let query = 'replace into carts (user_id, item_id) values (?, ?)'
 
-  connection.connect.query(query, [user.id, req.body.item_id, req.body.quantity, req.body.quantity], function (err, result) {
+  connection.connect.query(query, [user.id, req.body.item_id], function (err, result) {
     if (err) return res.json({ message: err?.sqlMessage || 'Error!' })
     return res.json({ message: 'Success' })
   })
