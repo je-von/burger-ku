@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:frontend/components/logo.dart';
 import 'package:frontend/pages/container.dart';
 import 'package:frontend/pages/register.dart';
 import 'package:frontend/util/api.dart';
@@ -38,14 +39,17 @@ class LoginPageState extends State<LoginPage> {
       final response = await Api.request('post', 'auth',
           body: {'email': email, 'password': password});
       final body = json.decode(response.body);
-      print(body);
       if (response.statusCode == 200) {
-        // print(body['data']['token']);
         SharedPreferences preferences = await SharedPreferences.getInstance();
         preferences.setString('auth_token', body['data']['token']);
+
+        // to prevent error (use_build_context_synchronously)
+        if (!mounted) return;
+
         Helper.showSnackBar(context, 'Login Success!');
         Helper.redirect(context, const HomeContainer(), removeHistory: true);
       } else {
+        if (!mounted) return;
         Helper.showSnackBar(context, body['message']);
       }
     }
@@ -62,13 +66,7 @@ class LoginPageState extends State<LoginPage> {
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-              SizedBox(
-                height: 200,
-                width: 200,
-                child: Center(
-                  child: Image.asset('assets/logo.png'),
-                ),
-              ),
+              const LogoWidget(),
               Row(
                 children: const [
                   Text(

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:frontend/components/logo.dart';
 import 'package:frontend/pages/login.dart';
 import 'package:frontend/util/api.dart';
 import 'package:frontend/util/helper.dart';
@@ -84,6 +85,7 @@ class RegisterPageState extends State<RegisterPage> {
       final response = await Api.request('post', 'register',
           body: {'name': name, 'email': email, 'password': password});
       final body = json.decode(response.body);
+      if (!mounted) return;
       if (response.statusCode == 200) {
         Helper.showSnackBar(context, 'Register Success!');
         Helper.redirect(context, const LoginPage(), removeHistory: true);
@@ -106,13 +108,7 @@ class RegisterPageState extends State<RegisterPage> {
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-              SizedBox(
-                height: 200,
-                width: 200,
-                child: Center(
-                  child: Image.asset('assets/logo.png'),
-                ),
-              ),
+              const LogoWidget(),
               Row(
                 children: const [
                   Text(
