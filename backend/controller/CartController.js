@@ -32,6 +32,28 @@ const insert = (req, res) => {
   })
 }
 
+const remove = (req, res) => {
+  const user = res.locals.current_user
+  let query = 'DELETE FROM carts WHERE user_id = ? AND item_id = ?'
+
+  connection.connect.query(query, [user.id, req.body.item_id], function (err, result) {
+    if (err || !result.affectedRows) return res.json({ message: err?.sqlMessage || 'Error!' })
+    return res.json({ message: 'Success' })
+  })
+}
+
+const checkout = (req, res) => {
+  const user = res.locals.current_user
+  let query = 'DELETE FROM carts WHERE user_id = ?'
+
+  connection.connect.query(query, [user.id, req.body.item_id], function (err, result) {
+    if (err || !result.affectedRows) return res.json({ message: err?.sqlMessage || 'Error!' })
+    return res.json({ message: 'Success' })
+  })
+}
+
 exports.getAll = getAll
 exports.insert = insert
+exports.remove = remove
+exports.checkout = checkout
 module.exports = exports

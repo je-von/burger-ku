@@ -29,5 +29,7 @@ app.get('/items', itemController.getAll)
 app.get('/items/:id', itemController.getById)
 app.get('/carts', cartController.getAll)
 app.post('/carts', cartController.insert)
+app.delete('/carts', cartController.remove)
+app.delete('/carts/checkout', cartController.checkout)
 
 module.exports = app
