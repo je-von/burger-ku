@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/util/api.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -18,7 +19,7 @@ class LoginPageState extends State<LoginPage> {
 
   dynamic auth(String email, String password) {}
 
-  void _validateLogin(BuildContext context) {
+  void _validateLogin(BuildContext context) async {
     String email = _ctrlEmail.text;
     String password = _ctrlPassword.text;
     if (email.isEmpty) {
@@ -33,15 +34,15 @@ class LoginPageState extends State<LoginPage> {
     } else if (password.length < 8) {
       _errorField = "PASS";
       _errorMessage = "Password must be at least 8 characters!";
-    } else if (!RegExp(r".*[A-Z].*").hasMatch(password) ||
-        !RegExp(r".*[a-z].*").hasMatch(password) ||
-        !RegExp(r".*[0-9].*").hasMatch(password) ||
-        !RegExp(r"[A-Za-z0-9]*").hasMatch(password)) {
-      _errorField = "PASS";
-      _errorMessage = "Password must be alphanumeric!";
+      // } else if (!RegExp(r".*[A-Z].*").hasMatch(password) ||
+      //     !RegExp(r".*[a-z].*").hasMatch(password) ||
+      //     !RegExp(r".*[0-9].*").hasMatch(password) ||
+      //     !RegExp(r"[A-Za-z0-9]*").hasMatch(password)) {
+      //   _errorField = "PASS";
+      //   _errorMessage = "Password must be alphanumeric!";
     } else {
-      _errorField = "PASS";
-      _errorMessage = "dah!";
+      // _errorField = "PASS";
+      // _errorMessage = "dah!";
       // User? user = null;
       // globals.users.forEach((u) {
       //   if (u.email == email && u.password == password) {
@@ -64,6 +65,10 @@ class LoginPageState extends State<LoginPage> {
       //   );
       //   return;
       // }
+
+      final response = await Api.request(
+          'post', 'auth', {'email': email, 'password': password});
+      print(response);
     }
     // print(_errorMessage);
   }
