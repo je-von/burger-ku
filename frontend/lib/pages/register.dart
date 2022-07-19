@@ -86,6 +86,7 @@ class RegisterPageState extends State<RegisterPage> {
       final body = json.decode(response.body);
       if (response.statusCode == 200) {
         Helper.showSnackBar(context, 'Register Success!');
+        Helper.redirect(context, const LoginPage(), removeHistory: true);
       } else {
         Helper.showSnackBar(context, body['message']);
       }
@@ -276,12 +277,7 @@ class RegisterPageState extends State<RegisterPage> {
               ),
               TextButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (builder) {
-                      return const LoginPage();
-                    }),
-                  );
+                  Helper.redirect(context, const LoginPage());
                 },
                 child: const Text("Already have an account? Login Here"),
               ),

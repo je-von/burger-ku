@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:frontend/pages/home.dart';
+import 'package:frontend/pages/container.dart';
 import 'package:frontend/pages/login.dart';
 import 'package:frontend/util/api.dart';
 
@@ -48,7 +48,7 @@ class AppState extends State<App> {
         fontFamily: 'Montserrat',
         primarySwatch: Colors.orange,
       ),
-      home: isLoggedIn ? const HomePage() : const LoginPage(),
+      home: isLoggedIn ? const HomeContainer() : const LoginPage(),
     );
   }
 }

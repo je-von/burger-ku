@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:frontend/pages/home.dart';
+import 'package:frontend/pages/container.dart';
 import 'package:frontend/pages/register.dart';
 import 'package:frontend/util/api.dart';
 import 'package:frontend/util/helper.dart';
@@ -44,12 +44,7 @@ class LoginPageState extends State<LoginPage> {
         SharedPreferences preferences = await SharedPreferences.getInstance();
         preferences.setString('auth_token', body['data']['token']);
         Helper.showSnackBar(context, 'Login Success!');
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-            builder: (context) => const HomePage(),
-          ),
-          (Route<dynamic> route) => false,
-        );
+        Helper.redirect(context, const HomeContainer(), removeHistory: true);
       } else {
         Helper.showSnackBar(context, body['message']);
       }
@@ -188,12 +183,7 @@ class LoginPageState extends State<LoginPage> {
               ),
               TextButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (builder) {
-                      return const RegisterPage();
-                    }),
-                  );
+                  Helper.redirect(context, const RegisterPage());
                 },
                 child: const Text("Don't have an account? Register Here"),
               ),
