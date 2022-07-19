@@ -28,5 +28,6 @@ app.use(middleware.validateToken)
 app.get('/items', itemController.getAll)
 app.get('/items/:id', itemController.getById)
 app.get('/carts', cartController.getAll)
+app.post('/carts', cartController.insert)
 
 module.exports = app
