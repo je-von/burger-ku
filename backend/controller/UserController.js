@@ -21,6 +21,12 @@ const register = (req, res) => {
   })
 }
 
+const getCurrentUser = (req, res) => {
+  const user = res.locals.current_user
+  return res.json({ data: user, message: 'Success' })
+}
+
 exports.auth = auth
 exports.register = register
+exports.getCurrentUser = getCurrentUser
 module.exports = exports

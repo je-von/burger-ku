@@ -25,6 +25,7 @@ app.post('/register', userController.register)
 
 // MIDDLEWARE to check user token
 app.use(middleware.validateToken)
+app.get('/users/current', userController.getCurrentUser)
 app.get('/items', itemController.getAll)
 app.get('/items/:id', itemController.getById)
 app.get('/carts', cartController.getAll)
