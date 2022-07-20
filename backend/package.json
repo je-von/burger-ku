@@ -10,13 +10,9 @@
     "cors": "^2.8.5",
     "debug": "~2.6.9",
     "express": "~4.16.1",
-    "express-session": "^1.17.3",
-    "google-auth-library": "^8.1.1",
     "morgan": "~1.9.1",
     "mysql": "^2.18.1",
     "node-fetch": "^3.2.9",
-    "passport": "^0.6.0",
-    "passport-google-oauth2": "^0.2.0",
     "path": "^0.12.7"
   }
 }
