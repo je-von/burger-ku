@@ -238,10 +238,8 @@ class RegisterPageState extends State<RegisterPage> {
               SizedBox(
                 width: 250,
                 child: ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _validateLogin(context);
-                    });
+                  onPressed: () async {
+                    await AuthHelper.authWithGoogle(context);
                   },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.resolveWith<Color>(

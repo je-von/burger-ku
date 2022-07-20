@@ -6,6 +6,7 @@ import 'package:frontend/pages/container.dart';
 import 'package:frontend/pages/register.dart';
 import 'package:frontend/util/api.dart';
 import 'package:frontend/util/helper.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
@@ -42,17 +43,11 @@ class LoginPageState extends State<LoginPage> {
         body: {'email': email, 'password': password},
       );
       final body = json.decode(response.body);
+      if (!mounted) return;
       if (response.statusCode == 200) {
-        SharedPreferences preferences = await SharedPreferences.getInstance();
-        preferences.setString('auth_token', body['data']['token']);
-
         // to prevent error (use_build_context_synchronously)
-        if (!mounted) return;
-
-        Helper.showSnackBar(context, 'Login Success!');
-        Helper.redirect(context, const HomeContainer(), removeHistory: true);
+        await AuthHelper.loginAndRedirect(body, context);
       } else {
-        if (!mounted) return;
         Helper.showSnackBar(context, body['message']);
       }
     }
@@ -149,10 +144,8 @@ class LoginPageState extends State<LoginPage> {
               SizedBox(
                 width: 250,
                 child: ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _validateLogin(context);
-                    });
+                  onPressed: () async {
+                    await AuthHelper.authWithGoogle(context);
                   },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.resolveWith<Color>(
