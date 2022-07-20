@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:frontend/components/card.dart';
 import 'package:frontend/model/item.dart';
+import 'package:frontend/pages/detail.dart';
 import 'package:frontend/util/api.dart';
+import 'package:frontend/util/helper.dart';
 import 'package:intl/intl.dart';
 
 class ItemPage extends StatefulWidget {
@@ -133,7 +135,8 @@ class ItemPageState extends State<ItemPage> {
                   title: e.name,
                   subTitle: NumberFormat.currency(locale: 'ID').format(e.price),
                   buttonTitle: 'Detail',
-                  onButtonPressed: () => {},
+                  onButtonPressed: () =>
+                      Helper.redirect(context, DetailPage(item: e)),
                 )),
               )
               .toList(),
