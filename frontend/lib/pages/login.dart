@@ -6,6 +6,7 @@ import 'package:frontend/pages/container.dart';
 import 'package:frontend/pages/register.dart';
 import 'package:frontend/util/api.dart';
 import 'package:frontend/util/helper.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
@@ -58,6 +59,12 @@ class LoginPageState extends State<LoginPage> {
     }
   }
 
+  GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: [
+      'email',
+      'profile',
+    ],
+  );
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -149,10 +156,13 @@ class LoginPageState extends State<LoginPage> {
               SizedBox(
                 width: 250,
                 child: ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _validateLogin(context);
-                    });
+                  onPressed: () async {
+                    try {
+                      final account = await _googleSignIn.signIn();
+                      print(account);
+                    } catch (e) {
+                      print(e);
+                    }
                   },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.resolveWith<Color>(
