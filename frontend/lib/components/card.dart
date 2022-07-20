@@ -26,7 +26,7 @@ class CardWidget extends StatelessWidget {
           ConstrainedBox(
             constraints: const BoxConstraints(
               maxHeight: 80,
-              maxWidth: 80,
+              maxWidth: 100,
               minHeight: 80,
               minWidth: 80,
             ),
