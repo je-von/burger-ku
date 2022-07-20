@@ -36,8 +36,11 @@ class LoginPageState extends State<LoginPage> {
       _errorField = "PASS";
       _errorMessage = "Password must be filled!";
     } else {
-      final response = await Api.request('post', 'auth',
-          body: {'email': email, 'password': password});
+      final response = await Api.request(
+        'post',
+        'auth',
+        body: {'email': email, 'password': password},
+      );
       final body = json.decode(response.body);
       if (response.statusCode == 200) {
         SharedPreferences preferences = await SharedPreferences.getInstance();
