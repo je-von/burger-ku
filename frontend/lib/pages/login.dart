@@ -46,28 +46,13 @@ class LoginPageState extends State<LoginPage> {
       if (!mounted) return;
       if (response.statusCode == 200) {
         // to prevent error (use_build_context_synchronously)
-        await loginAndRedirect(body, context);
+        await AuthHelper.loginAndRedirect(body, context);
       } else {
         Helper.showSnackBar(context, body['message']);
       }
     }
   }
 
-  Future<void> loginAndRedirect(body, BuildContext context) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.setString('auth_token', body['data']['token']);
-
-    if (!mounted) return;
-    Helper.showSnackBar(context, 'Login Success!');
-    Helper.redirect(context, const HomeContainer(), removeHistory: true);
-  }
-
-  GoogleSignIn _googleSignIn = GoogleSignIn(
-    scopes: [
-      'email',
-      'profile',
-    ],
-  );
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -160,33 +145,7 @@ class LoginPageState extends State<LoginPage> {
                 width: 250,
                 child: ElevatedButton(
                   onPressed: () async {
-                    try {
-                      final account = await _googleSignIn.signIn();
-                      if (account != null) {
-                        GoogleSignInAuthentication googleSignInAuthentication =
-                            await account.authentication;
-                        final response = await Api.request(
-                          'post',
-                          'auth/google',
-                          body: {
-                            'name': '${account.displayName}',
-                            'email': account.email,
-                            'access_token':
-                                '${googleSignInAuthentication.accessToken}'
-                          },
-                        );
-                        final body = json.decode(response.body);
-                        if (!mounted) return;
-                        if (response.statusCode == 200) {
-                          // to prevent error (use_build_context_synchronously)
-                          await loginAndRedirect(body, context);
-                        } else {
-                          Helper.showSnackBar(context, body['message']);
-                        }
-                      }
-                    } catch (e) {
-                      Helper.showSnackBar(context, 'Error!');
-                    }
+                    await AuthHelper.authWithGoogle(context);
                   },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.resolveWith<Color>(
