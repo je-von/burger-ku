@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:frontend/pages/register.dart';
 import 'package:frontend/util/api.dart';
 import 'package:frontend/util/helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -150,9 +152,7 @@ class LoginPageState extends State<LoginPage> {
                 width: 250,
                 child: ElevatedButton(
                   onPressed: () {
-                    setState(() {
-                      _validateLogin(context);
-                    });
+                    Helper.redirect(context, const GoogleWebView());
                   },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.resolveWith<Color>(
@@ -193,5 +193,57 @@ class LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+}
+
+class GoogleWebView extends StatefulWidget {
+  const GoogleWebView({Key? key}) : super(key: key);
+
+  @override
+  State<GoogleWebView> createState() => _GoogleWebViewState();
+}
+
+class _GoogleWebViewState extends State<GoogleWebView> {
+  late WebViewController _controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('Sign in with Google'),
+        ),
+        body: Builder(builder: (BuildContext context) {
+          return WebView(
+            userAgent: 'random',
+            initialUrl: '${Api.backendUrl}auth/google',
+            javascriptMode: JavascriptMode.unrestricted,
+            onWebViewCreated: (controller) {
+              // _controller.complete(webViewController);
+              _controller = controller;
+            },
+            // navigationDelegate: (NavigationRequest request) {
+            //   if (request.url.contains('auth/google/success') ||
+            //       request.url.contains('auth/google/failure')) {
+            //     print('blocking navigation to $request}');
+            //     return NavigationDecision.prevent;
+            //   }
+            //   print('allowing navigation to $request');
+            //   return NavigationDecision.navigate;
+            // },
+            // onPageStarted: (String url) {
+            //   print('Page started loading: $url');
+            // },
+            onPageFinished: (String url) async {
+              print('Page finished loading: $url');
+              if (url.contains('auth/google/success') ||
+                  url.contains('auth/google/failure')) {
+                final response = await _controller.runJavascriptReturningResult(
+                    "document.documentElement.innerText");
+                print(json.decode(response));
+              }
+            },
+            gestureNavigationEnabled: true,
+          );
+        }));
   }
 }
