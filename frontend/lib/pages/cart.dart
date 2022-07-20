@@ -30,6 +30,14 @@ class CartPageState extends State<CartPage> {
     });
   }
 
+  _getTotalPrice() {
+    int total = 0;
+    for (var i in _cartItems) {
+      total += i.price;
+    }
+    return total;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -40,23 +48,44 @@ class CartPageState extends State<CartPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {
+        onPressed: () {
           if (_cartItems.isEmpty) {
             Helper.showSnackBar(context, 'Cart is empty!');
             return;
           }
 
-          final response = await Api.request(
-            'delete',
-            'carts/checkout',
+          showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: const Text('Are you sure want to checkout?'),
+              content: Text(
+                  'Total: ${NumberFormat.currency(locale: 'ID').format(_getTotalPrice())} (${_cartItems.length} items)'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.pop(context, 'Cancel'),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    Navigator.pop(context, 'OK');
+                    final response = await Api.request(
+                      'delete',
+                      'carts/checkout',
+                    );
+                    if (!mounted) return;
+                    if (response.statusCode == 200) {
+                      Helper.showSnackBar(context, 'Checkout successful!');
+                      _getAllCartItems();
+                    } else {
+                      Helper.showSnackBar(
+                          context, json.decode(response.body)['message']);
+                    }
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
           );
-          if (!mounted) return;
-          if (response.statusCode == 200) {
-            Helper.showSnackBar(context, 'Checkout successful!');
-            _getAllCartItems();
-          } else {
-            Helper.showSnackBar(context, json.decode(response.body)['message']);
-          }
         },
         backgroundColor: Colors.grey.shade50,
         child: Icon(
