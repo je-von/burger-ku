@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:frontend/pages/cart.dart';
 import 'package:frontend/pages/home.dart';
 import 'package:frontend/pages/item.dart';
-import 'package:frontend/pages/login.dart';
+import 'package:frontend/util/api.dart';
 import 'package:frontend/util/helper.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeContainer extends StatefulWidget {
   const HomeContainer({Key? key}) : super(key: key);
@@ -17,10 +16,28 @@ class HomeContainer extends StatefulWidget {
 
 class HomeContainerState extends State<HomeContainer> {
   int _selectedIndex = 0;
+  String _currentUserName = '';
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  _getCurrentUserName() async {
+    final user = await Api.getCurrentUser();
+    setState(() {
+      if (user != null) {
+        _currentUserName = user['name'] ?? '';
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _getCurrentUserName();
   }
 
   final List<String> _titles = <String>[
@@ -33,6 +50,7 @@ class HomeContainerState extends State<HomeContainer> {
     const ItemPage(),
     const CartPage(),
   ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,21 +58,24 @@ class HomeContainerState extends State<HomeContainer> {
         title: Text(_titles[_selectedIndex]),
         actions: [
           PopupMenuButton(itemBuilder: (context) {
-            return ['Logout'].map((e) {
-              return PopupMenuItem(
-                child: TextButton(
-                  child: Row(
-                    children: [
-                      const Icon(Icons.logout_rounded),
-                      Text(e),
-                    ],
-                  ),
-                  onPressed: () async {
-                    await AuthHelper.logout(context);
-                  },
+            return [
+              PopupMenuItem(
+                child: Row(
+                  children: [
+                    const Icon(Icons.person),
+                    Text(_currentUserName),
+                    const Spacer(),
+                    IconButton(
+                      color: Colors.orange.shade800,
+                      icon: const Icon(Icons.logout_rounded),
+                      onPressed: () async {
+                        await AuthHelper.logout(context);
+                      },
+                    ),
+                  ],
                 ),
-              );
-            }).toList();
+              ),
+            ];
           })
         ],
       ),

@@ -33,7 +33,7 @@ class Api {
     final response = await request('get', 'users/current');
 
     if (response.statusCode == 200) {
-      return json.decode(response.body);
+      return json.decode(response.body)['data'];
     } else {
       return null;
     }
