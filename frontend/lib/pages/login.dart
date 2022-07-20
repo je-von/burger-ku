@@ -43,20 +43,23 @@ class LoginPageState extends State<LoginPage> {
         body: {'email': email, 'password': password},
       );
       final body = json.decode(response.body);
+      if (!mounted) return;
       if (response.statusCode == 200) {
-        SharedPreferences preferences = await SharedPreferences.getInstance();
-        preferences.setString('auth_token', body['data']['token']);
-
         // to prevent error (use_build_context_synchronously)
-        if (!mounted) return;
-
-        Helper.showSnackBar(context, 'Login Success!');
-        Helper.redirect(context, const HomeContainer(), removeHistory: true);
+        await loginAndRedirect(body, context);
       } else {
-        if (!mounted) return;
         Helper.showSnackBar(context, body['message']);
       }
     }
+  }
+
+  Future<void> loginAndRedirect(body, BuildContext context) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.setString('auth_token', body['data']['token']);
+
+    if (!mounted) return;
+    Helper.showSnackBar(context, 'Login Success!');
+    Helper.redirect(context, const HomeContainer(), removeHistory: true);
   }
 
   GoogleSignIn _googleSignIn = GoogleSignIn(
@@ -160,15 +163,29 @@ class LoginPageState extends State<LoginPage> {
                     try {
                       final account = await _googleSignIn.signIn();
                       if (account != null) {
-                        print(account);
                         GoogleSignInAuthentication googleSignInAuthentication =
                             await account.authentication;
-                        print(
-                            'access: ${googleSignInAuthentication.accessToken}');
-                        print('id: ${googleSignInAuthentication.idToken}');
+                        final response = await Api.request(
+                          'post',
+                          'auth/google',
+                          body: {
+                            'name': '${account.displayName}',
+                            'email': account.email,
+                            'access_token':
+                                '${googleSignInAuthentication.accessToken}'
+                          },
+                        );
+                        final body = json.decode(response.body);
+                        if (!mounted) return;
+                        if (response.statusCode == 200) {
+                          // to prevent error (use_build_context_synchronously)
+                          await loginAndRedirect(body, context);
+                        } else {
+                          Helper.showSnackBar(context, body['message']);
+                        }
                       }
                     } catch (e) {
-                      print(e);
+                      Helper.showSnackBar(context, 'Error!');
                     }
                   },
                   style: ButtonStyle(
