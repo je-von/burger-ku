@@ -41,28 +41,80 @@ class ItemPageState extends State<ItemPage> {
     _getAllItems();
   }
 
+  String dropdownValue = 'Filter';
   @override
   Widget build(BuildContext context) {
-    return GridView.count(
-      primary: false,
+    return Padding(
       padding: const EdgeInsets.all(10),
-      crossAxisSpacing: 10,
-      mainAxisSpacing: 10,
-      crossAxisCount: 2,
-      children: _items
-          .map(
-            (e) => (CardWidget(
-              image: Image.network(
-                Api.backendUrl + e.imagePath,
-                fit: BoxFit.cover,
+      child: ListView(
+        children: [
+          DecoratedBox(
+            decoration: BoxDecoration(
+              color: Colors.grey.shade300,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: const <BoxShadow>[
+                BoxShadow(
+                  color: Colors.grey,
+                  blurRadius: 5,
+                )
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.only(left: 30, right: 30),
+              child: DropdownButton<String>(
+                value: dropdownValue,
+                items: <String>['Filter', 'One', 'Two', 'Free', 'Four']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (String? value) {
+                  setState(() {
+                    dropdownValue = value!;
+                  });
+                },
+                icon: const Padding(
+                  padding: EdgeInsets.only(left: 20),
+                  child: Icon(Icons.arrow_drop_down),
+                ),
+                style: const TextStyle(
+                    //te
+                    color: Colors.black,
+                    fontSize: 20),
+                dropdownColor: Colors.white,
+                underline: Container(),
+                isExpanded: true,
               ),
-              title: e.name,
-              subTitle: NumberFormat.currency(locale: 'ID').format(e.price),
-              buttonTitle: 'Detail',
-              onButtonPressed: () => {},
-            )),
-          )
-          .toList(),
+            ),
+          ),
+          GridView.count(
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            primary: false,
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            crossAxisSpacing: 5,
+            mainAxisSpacing: 5,
+            crossAxisCount: 2,
+            children: _items
+                .map(
+                  (e) => (CardWidget(
+                    image: Image.network(
+                      Api.backendUrl + e.imagePath,
+                      fit: BoxFit.cover,
+                    ),
+                    title: e.name,
+                    subTitle:
+                        NumberFormat.currency(locale: 'ID').format(e.price),
+                    buttonTitle: 'Detail',
+                    onButtonPressed: () => {},
+                  )),
+                )
+                .toList(),
+          ),
+        ],
+      ),
     );
   }
 }
