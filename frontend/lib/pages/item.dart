@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:frontend/model/item.dart';
 import 'package:frontend/util/api.dart';
+import 'package:intl/intl.dart';
 
 class ItemPage extends StatefulWidget {
   const ItemPage({Key? key}) : super(key: key);
@@ -65,6 +66,15 @@ class ItemPageState extends State<ItemPage> {
                     ),
                     Text(
                       e.name,
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.fade,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Text(
+                      NumberFormat.currency(locale: 'ID').format(e.price),
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.fade,
                     ),
