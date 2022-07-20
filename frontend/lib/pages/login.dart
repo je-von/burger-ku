@@ -159,7 +159,14 @@ class LoginPageState extends State<LoginPage> {
                   onPressed: () async {
                     try {
                       final account = await _googleSignIn.signIn();
-                      print(account);
+                      if (account != null) {
+                        print(account);
+                        GoogleSignInAuthentication googleSignInAuthentication =
+                            await account.authentication;
+                        print(
+                            'access: ${googleSignInAuthentication.accessToken}');
+                        print('id: ${googleSignInAuthentication.idToken}');
+                      }
                     } catch (e) {
                       print(e);
                     }
