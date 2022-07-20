@@ -43,7 +43,34 @@ class ItemPageState extends State<ItemPage> {
       crossAxisSpacing: 10,
       mainAxisSpacing: 10,
       crossAxisCount: 2,
-      children: [Text('$_items')],
+      children: _items
+          .map((e) => (Card(
+                child: Column(
+                  children: [
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        maxHeight: 80,
+                        maxWidth: 80,
+                        minHeight: 80,
+                        minWidth: 80,
+                      ),
+                      child: Image.network(
+                          '${Api.backendUrl}images/${e["image_path"]}',
+                          fit: BoxFit.cover),
+                    ),
+                    Text(
+                      e['name'],
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.fade,
+                    ),
+                    ElevatedButton(
+                      child: const Text('Detail'),
+                      onPressed: () => {},
+                    ),
+                  ],
+                ),
+              )))
+          .toList(),
     );
   }
 }
