@@ -50,7 +50,13 @@ class HomeContainerState extends State<HomeContainer> {
                     ],
                   ),
                   onPressed: () async {
-                    await AuthHelper.logout(context);
+                    SharedPreferences preferences =
+                        await SharedPreferences.getInstance();
+                    if (await preferences.remove('auth_token')) {
+                      if (!mounted) return;
+                      Helper.redirect(context, const LoginPage(),
+                          removeHistory: true);
+                    }
                   },
                 ),
               );

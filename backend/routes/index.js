@@ -4,6 +4,8 @@ var itemController = require('../controller/ItemController')
 var typeController = require('../controller/TypeController')
 var cartController = require('../controller/CartController')
 var middleware = require('../middleware/AuthMiddleware')
+var passport = require('passport')
+var session = require('express-session')
 var cors = require('cors')
 
 var app = express()
@@ -15,7 +17,9 @@ app.use(
 app.use(express.json())
 app.use(express.static('public'))
 app.use(express.urlencoded({ extended: false }))
-
+app.use(session({ secret: 'SECRET' }))
+app.use(passport.initialize())
+app.use(passport.session())
 /* GET home page. */
 app.get('/', function (req, res, next) {
   res.render('index', { title: 'Express' })
@@ -23,7 +27,10 @@ app.get('/', function (req, res, next) {
 app.post('/auth', userController.auth)
 app.post('/register', userController.register)
 
-app.post('/auth/google', userController.googleAuth)
+app.get('/auth/google', userController.googleAuth)
+app.get('/auth/google/callback', userController.googleCallback)
+app.get('/auth/google/success', userController.googleSuccess)
+app.get('/auth/google/failure', userController.googleFailure)
 
 // MIDDLEWARE to check user token
 app.use(middleware.validateToken)
