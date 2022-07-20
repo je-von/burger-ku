@@ -1,7 +1,7 @@
 class Item {
   final int id;
   final String name;
-  final String type;
+  final String? type;
   final String description;
   final int price;
   final String imagePath;
