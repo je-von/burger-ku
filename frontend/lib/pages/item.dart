@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:frontend/model/item.dart';
 import 'package:frontend/util/api.dart';
 
 class ItemPage extends StatefulWidget {
@@ -13,7 +14,7 @@ class ItemPage extends StatefulWidget {
 }
 
 class ItemPageState extends State<ItemPage> {
-  List<dynamic> _items = [];
+  List<Item> _items = [];
 
   @override
   void setState(VoidCallback fn) {
@@ -24,7 +25,10 @@ class ItemPageState extends State<ItemPage> {
     final response = await Api.request('get', 'items');
     setState(() {
       if (response.statusCode == 200) {
-        _items = json.decode(response.body)['data'];
+        _items = json
+            .decode(response.body)['data']
+            .map<Item>((e) => (Item.fromJson(e)))
+            .toList();
       }
     });
   }
@@ -55,11 +59,12 @@ class ItemPageState extends State<ItemPage> {
                         minWidth: 80,
                       ),
                       child: Image.network(
-                          '${Api.backendUrl}images/${e["image_path"]}',
-                          fit: BoxFit.cover),
+                        Api.backendUrl + e.imagePath,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                     Text(
-                      e['name'],
+                      e.name,
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.fade,
                     ),
