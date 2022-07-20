@@ -17,6 +17,7 @@ class ItemPage extends StatefulWidget {
 
 class ItemPageState extends State<ItemPage> {
   List<Item> _items = [];
+  List<Item> _filteredItems = [];
   List<String> _types = [];
 
   @override
@@ -32,6 +33,7 @@ class ItemPageState extends State<ItemPage> {
             .decode(response.body)['data']
             .map<Item>((e) => (Item.fromJson(e)))
             .toList();
+        _filteredItems = _items;
       }
     });
   }
@@ -57,7 +59,7 @@ class ItemPageState extends State<ItemPage> {
     _getAllTypes();
   }
 
-  String dropdownValue = 'Filter';
+  String _dropdownValue = 'Filter';
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -78,7 +80,7 @@ class ItemPageState extends State<ItemPage> {
             child: Padding(
               padding: const EdgeInsets.only(left: 30, right: 30),
               child: DropdownButton<String>(
-                value: dropdownValue,
+                value: _dropdownValue,
                 items: _types.map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
@@ -87,7 +89,14 @@ class ItemPageState extends State<ItemPage> {
                 }).toList(),
                 onChanged: (String? value) {
                   setState(() {
-                    dropdownValue = value!;
+                    _dropdownValue = value!;
+                    if (value == 'Filter') {
+                      _filteredItems = _items;
+                    } else {
+                      _filteredItems =
+                          _items.where((i) => i.type == value).toList();
+                    }
+                    print(_filteredItems);
                   });
                 },
                 icon: const Padding(
@@ -95,9 +104,10 @@ class ItemPageState extends State<ItemPage> {
                   child: Icon(Icons.arrow_drop_down),
                 ),
                 style: const TextStyle(
-                    //te
-                    color: Colors.black,
-                    fontSize: 20),
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontFamily: 'Montserrat',
+                ),
                 dropdownColor: Colors.white,
                 underline: Container(),
                 isExpanded: true,
@@ -112,7 +122,7 @@ class ItemPageState extends State<ItemPage> {
             crossAxisSpacing: 5,
             mainAxisSpacing: 5,
             crossAxisCount: 2,
-            children: _items
+            children: _filteredItems
                 .map(
                   (e) => (CardWidget(
                     image: Image.network(
