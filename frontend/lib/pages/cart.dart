@@ -37,34 +37,47 @@ class CartPageState extends State<CartPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: _cartItems
-          .map((e) => (Card(
-                margin:
-                    const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
-                child: ListTile(
-                  leading: ConstrainedBox(
-                    constraints: const BoxConstraints(
-                      maxHeight: 50,
-                      maxWidth: 45,
-                      minHeight: 50,
-                      minWidth: 45,
+    return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => {},
+        backgroundColor: Colors.grey.shade50,
+        child: Icon(
+          Icons.shopping_cart_checkout,
+          color: Colors.green.shade400,
+        ),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.only(top: 20),
+        children: _cartItems
+            .map((e) => (Card(
+                  elevation: 7,
+                  shadowColor: Colors.grey.shade400,
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
+                  child: ListTile(
+                    leading: ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        maxHeight: 50,
+                        maxWidth: 45,
+                        minHeight: 50,
+                        minWidth: 45,
+                      ),
+                      child: Image.network(
+                        Api.backendUrl + e.imagePath,
+                        fit: BoxFit.contain,
+                      ),
                     ),
-                    child: Image.network(
-                      Api.backendUrl + e.imagePath,
-                      fit: BoxFit.contain,
+                    title: Text(
+                      '${e.name} - ${NumberFormat.currency(locale: 'ID').format(e.price)}',
+                      style: const TextStyle(
+                        fontSize: 14,
+                      ),
                     ),
+                    trailing: Icon(Icons.delete, color: Colors.red.shade300),
                   ),
-                  title: Text(
-                    '${e.name} - ${NumberFormat.currency(locale: 'ID').format(e.price)}',
-                    style: const TextStyle(
-                      fontSize: 14,
-                    ),
-                  ),
-                  trailing: const Icon(Icons.delete),
-                ),
-              )))
-          .toList(),
+                )))
+            .toList(),
+      ),
     );
   }
 }
