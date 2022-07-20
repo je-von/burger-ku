@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:frontend/components/card.dart';
 import 'package:frontend/model/item.dart';
 import 'package:frontend/util/api.dart';
 import 'package:intl/intl.dart';
@@ -49,42 +50,18 @@ class ItemPageState extends State<ItemPage> {
       mainAxisSpacing: 10,
       crossAxisCount: 2,
       children: _items
-          .map((e) => (Card(
-                child: Column(
-                  children: [
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(
-                        maxHeight: 80,
-                        maxWidth: 80,
-                        minHeight: 80,
-                        minWidth: 80,
-                      ),
-                      child: Image.network(
-                        Api.backendUrl + e.imagePath,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    Text(
-                      e.name,
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.fade,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    Text(
-                      NumberFormat.currency(locale: 'ID').format(e.price),
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.fade,
-                    ),
-                    ElevatedButton(
-                      child: const Text('Detail'),
-                      onPressed: () => {},
-                    ),
-                  ],
-                ),
-              )))
+          .map(
+            (e) => (CardWidget(
+              image: Image.network(
+                Api.backendUrl + e.imagePath,
+                fit: BoxFit.cover,
+              ),
+              title: e.name,
+              subTitle: NumberFormat.currency(locale: 'ID').format(e.price),
+              buttonTitle: 'Detail',
+              onButtonPressed: () => {},
+            )),
+          )
           .toList(),
     );
   }
