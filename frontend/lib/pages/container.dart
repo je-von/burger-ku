@@ -23,6 +23,11 @@ class HomeContainerState extends State<HomeContainer> {
     });
   }
 
+  final List<String> _titles = <String>[
+    'Home',
+    'Menu',
+    'My Carts',
+  ];
   final List<Widget> _widgets = <Widget>[
     const HomePage(),
     const ItemPage(),
@@ -32,6 +37,7 @@ class HomeContainerState extends State<HomeContainer> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: Text(_titles[_selectedIndex]),
         actions: [
           PopupMenuButton(itemBuilder: (context) {
             return ['Logout'].map((e) {

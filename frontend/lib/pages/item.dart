@@ -17,6 +17,7 @@ class ItemPage extends StatefulWidget {
 
 class ItemPageState extends State<ItemPage> {
   List<Item> _items = [];
+  List<String> _types = [];
 
   @override
   void setState(VoidCallback fn) {
@@ -35,10 +36,25 @@ class ItemPageState extends State<ItemPage> {
     });
   }
 
+  _getAllTypes() async {
+    final response = await Api.request('get', 'types');
+    setState(() {
+      if (response.statusCode == 200) {
+        _types = json
+            .decode(response.body)['data']
+            .map<String>(
+                (e) => (e['name'] is String ? e['name'] as String : ''))
+            .toList();
+        _types.insert(0, 'Filter');
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     _getAllItems();
+    _getAllTypes();
   }
 
   String dropdownValue = 'Filter';
@@ -63,8 +79,7 @@ class ItemPageState extends State<ItemPage> {
               padding: const EdgeInsets.only(left: 30, right: 30),
               child: DropdownButton<String>(
                 value: dropdownValue,
-                items: <String>['Filter', 'One', 'Two', 'Free', 'Four']
-                    .map<DropdownMenuItem<String>>((String value) {
+                items: _types.map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value),
