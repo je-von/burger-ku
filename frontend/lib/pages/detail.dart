@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:frontend/model/item.dart';
 import 'package:frontend/util/api.dart';
+import 'package:frontend/util/helper.dart';
 import 'package:intl/intl.dart';
 
 class DetailPage extends StatefulWidget {
@@ -51,7 +54,22 @@ class DetailPageState extends State<DetailPage> {
             textAlign: TextAlign.center,
           ),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () async {
+              final response = await Api.request(
+                'post',
+                'carts',
+                body: {'item_id': '${widget.item.id}'},
+              );
+
+              if (!mounted) return;
+              if (response.statusCode == 200) {
+                Helper.showSnackBar(
+                    context, '${widget.item.name} added to cart successfully');
+              } else {
+                Helper.showSnackBar(
+                    context, json.decode(response.body)['message']);
+              }
+            },
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.resolveWith<Color>(
                   (Set<MaterialState> states) {
