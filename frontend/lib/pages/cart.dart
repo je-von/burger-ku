@@ -40,7 +40,24 @@ class CartPageState extends State<CartPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () => {},
+        onPressed: () async {
+          if (_cartItems.isEmpty) {
+            Helper.showSnackBar(context, 'Cart is empty!');
+            return;
+          }
+
+          final response = await Api.request(
+            'delete',
+            'carts/checkout',
+          );
+          if (!mounted) return;
+          if (response.statusCode == 200) {
+            Helper.showSnackBar(context, 'Checkout successful!');
+            _getAllCartItems();
+          } else {
+            Helper.showSnackBar(context, json.decode(response.body)['message']);
+          }
+        },
         backgroundColor: Colors.grey.shade50,
         child: Icon(
           Icons.shopping_cart_checkout,
